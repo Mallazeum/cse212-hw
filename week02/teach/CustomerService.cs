@@ -11,20 +11,65 @@ public class CustomerService {
         // Test Cases
 
         // Test 1
-        // Scenario: 
-        // Expected Result: 
+        // Scenario: Specifying a queue that is to small will result in the queue being defaulted to size 10 and create one of a specified size
+        // Expected Result: There will be 10 customers slots when input is 0 or less the specified size is used for the specified queue
         Console.WriteLine("Test 1");
+        var cs = new CustomerService(0);
+        var sq = new CustomerService(1);
+        Console.WriteLine(cs);
+        Console.WriteLine(sq);
 
-        // Defect(s) Found: 
+        // Defect(s) Found: None
 
         Console.WriteLine("=================");
 
         // Test 2
-        // Scenario: 
-        // Expected Result: 
+        // Scenario: adding customers to the queue
+        // Expected Result: The customers are added as a queue
         Console.WriteLine("Test 2");
+        cs.AddNewCustomer();
+        Console.WriteLine();
+        cs.AddNewCustomer();
+        Console.WriteLine();
+        // Console.WriteLine(cs);
 
-        // Defect(s) Found: 
+        // Defect(s) Found: none
+
+        Console.WriteLine("=================");
+
+        // Test 3
+        // Scenario: removing customers
+        // Expected Result: the customers are removed fifo
+        Console.WriteLine("Test 3");
+        cs.ServeCustomer();
+        Console.WriteLine();
+        Console.WriteLine(cs);
+
+        // Defect(s) Found: It would remove the first item before displaying the first item so 
+        //so that the item shown is the new first not the one being served
+
+        Console.WriteLine("=================");
+
+        // Test 4 
+        // Scenario: removing a customer from an empty queue
+        // Expected Result: Error message displayed
+        Console.WriteLine("Test 4");
+        cs.ServeCustomer(); // Remove the second one from test 2 that wasn't removed in test 3 
+        cs.ServeCustomer(); // This one should display the error
+
+        // Defect(s) Found: Serve customer was not checking if the queue was empty and there was no code to display any error message
+
+        Console.WriteLine("=================");
+
+        // Test 5
+        // Scenario: Adding a customer to a full queue
+        // Expected Result: Error message displayed
+        Console.WriteLine("Test 5");
+        // Uses sq which was set to have a max size of one in test 1
+        sq.AddNewCustomer();
+        sq.AddNewCustomer();// This one should throw the error
+
+        // Defect(s) Found: When checking if the max size had been reached in the queue it was checking if the count of the queue was greater than max count allowing one more thaan the max into the queue
 
         Console.WriteLine("=================");
 
@@ -67,7 +112,7 @@ public class CustomerService {
     /// </summary>
     private void AddNewCustomer() {
         // Verify there is room in the service queue
-        if (_queue.Count > _maxSize) {
+        if (_queue.Count == _maxSize) {
             Console.WriteLine("Maximum Number of Customers in Queue.");
             return;
         }
@@ -88,9 +133,16 @@ public class CustomerService {
     /// Dequeue the next customer and display the information.
     /// </summary>
     private void ServeCustomer() {
-        _queue.RemoveAt(0);
-        var customer = _queue[0];
-        Console.WriteLine(customer);
+        if(_queue.Count <= 0)
+        {
+            Console.WriteLine("ERROR: There are no more customers to serve");
+        }
+        else
+        {
+            var customer = _queue[0];
+            _queue.RemoveAt(0);
+            Console.WriteLine(customer);
+        }
     }
 
     /// <summary>
